@@ -1,0 +1,15 @@
+[project]
+name = "comfyui-xy-grid-sidebar"
+description = "A ComfyUI sidebar extension for XY grid parameter exploration"
+version = "0.0.1"
+license = { file = "LICENSE" }
+dependencies = ["Pillow"]
+
+[project.urls]
+Repository = "https://github.com/alexopus/ComfyUI-XY-Grid-Sidebar"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = "alexopus"
+DisplayName = "ComfyUI XY Grid Sidebar"
+Icon = ""

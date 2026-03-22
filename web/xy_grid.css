@@ -1,0 +1,183 @@
+.xy-grid-sidebar {
+  padding: 10px;
+  font-size: 13px;
+  color: var(--fg-color);
+  box-sizing: border-box;
+}
+.xy-grid-sidebar select,
+.xy-grid-sidebar input[type="text"] {
+  background: var(--comfy-input-bg, #222);
+  color: var(--fg-color, #fff);
+  border: 1px solid var(--border-color, #555);
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-size: 13px;
+  box-sizing: border-box;
+  outline: none;
+}
+.xy-grid-sidebar select:focus,
+.xy-grid-sidebar input[type="text"]:focus {
+  border-color: color-mix(in srgb, var(--fg-color, #fff) 60%, transparent);
+}
+.xy-grid-sidebar input[type="range"] {
+  accent-color: color-mix(in srgb, var(--fg-color, #fff) 60%, transparent);
+}
+.xy-grid-subtitle {
+  font-size: 12px;
+  opacity: 0.5;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+.xy-grid-section {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color, #444);
+}
+.xy-grid-heading {
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+  margin-bottom: 6px;
+}
+.xy-grid-btn {
+  background: var(--comfy-menu-bg, #353535);
+  color: var(--fg-color, #fff);
+  border: 1px solid var(--border-color, #555);
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: opacity 0.15s;
+}
+.xy-grid-btn:hover:not(:disabled) {
+  opacity: 0.8;
+}
+.xy-grid-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.xy-grid-btn-mode-abc {
+  color: #d4956a;
+  border-color: color-mix(in srgb, #d4956a 40%, transparent);
+}
+.xy-grid-btn-mode-range {
+  color: #6ab0d4;
+  border-color: color-mix(in srgb, #6ab0d4 40%, transparent);
+}
+.xy-grid-btn-mode-sr {
+  color: #6ab87a;
+  border-color: color-mix(in srgb, #6ab87a 40%, transparent);
+}
+.xy-grid-btn-run {
+  font-weight: bold;
+  background: color-mix(in srgb, var(--fg-color, #fff) 15%, transparent);
+  border-color: color-mix(in srgb, var(--fg-color, #fff) 30%, transparent);
+}
+.xy-grid-btn-run:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--fg-color, #fff) 22%, transparent);
+  opacity: 1;
+}
+.xy-grid-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--fg-color);
+}
+.xy-grid-sidebar textarea {
+  background: var(--comfy-input-bg, #222);
+  color: var(--fg-color, #fff);
+  border: 1px solid var(--border-color, #555);
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 13px;
+  font-family: inherit;
+  box-sizing: border-box;
+  outline: none;
+  resize: vertical;
+  width: 100%;
+}
+.xy-grid-sidebar textarea:focus {
+  border-color: color-mix(in srgb, var(--fg-color, #fff) 60%, transparent);
+}
+.xy-grid-sr-preview {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--fg-color);
+  opacity: 0.45;
+  background: var(--comfy-input-bg, #222);
+  border: 1px solid var(--border-color, #444);
+  border-radius: 3px;
+  padding: 4px 6px;
+  margin-bottom: 4px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 72px;
+  overflow-y: auto;
+}
+.xy-grid-val-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-bottom: 4px;
+  min-height: 0;
+}
+.xy-grid-val-tag {
+  font-size: 11px;
+  opacity: 0.7;
+  font-family: monospace;
+}
+.xy-grid-val-more {
+  font-size: 11px;
+  font-style: italic;
+  opacity: 0.5;
+  align-self: center;
+}
+.xy-grid-combo-preview {
+  text-align: center;
+  font-size: 12px;
+  font-family: monospace;
+  color: var(--descrip-text, #999);
+  margin-bottom: 6px;
+  min-height: 1em;
+}
+.xy-grid-combo-preview .xy-grid-combo-total {
+  color: var(--fg-color, #fff);
+}
+.xy-grid-mode-help {
+  margin-top: 8px;
+  font-size: 11px;
+  line-height: 1.8;
+  opacity: 0.45;
+  color: var(--fg-color);
+}
+.xy-grid-mode-help em {
+  font-style: normal;
+  opacity: 0.7;
+}
+.xy-grid-mode-help-sub {
+  display: block;
+  padding-left: 28px;
+  line-height: 1.6;
+}
+.xy-grid-mode-help-label {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 0px 4px;
+  border-radius: 3px;
+  border: 1px solid currentColor;
+  margin-right: 4px;
+  vertical-align: middle;
+  opacity: 0.8;
+}
+.xy-grid-status {
+  color: #c8b84a;
+  background: rgba(200, 184, 74, 0.1);
+  border: 1px solid rgba(200, 184, 74, 0.25);
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-size: 12px;
+  word-break: break-all;
+}
