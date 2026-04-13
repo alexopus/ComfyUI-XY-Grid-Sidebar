@@ -1,30 +1,20 @@
 import { app } from "../../scripts/app.js";
 
 export function splitValues(str) {
+  if (!str || typeof str !== "string") return [];
+
   const results = [];
-  let current = "";
-  let inQuotes = false;
-  let i = 0;
-  while (i < str.length) {
-    const ch = str[i];
-    if (ch === "\\" && str[i + 1] === '"') {
-      current += '"';
-      i += 2;
-    } else if (ch === '"') {
-      inQuotes = !inQuotes;
-      i++;
-    } else if (ch === "," && !inQuotes) {
-      const val = current.trim();
-      if (val) results.push(val);
-      current = "";
-      i++;
-    } else {
-      current += ch;
-      i++;
-    }
+
+  // Split by newline and treat each line as a single value. 줄바꿈으로 먼저 나눈 뒤, 각 줄을 하나의 값으로 취급
+  const lines = str.split(/\r?\n/);
+
+  for (let line of lines) {
+    line = line.trim();
+    if (line === "") continue;        // Skip blank lines 빈 줄은 무시
+
+    results.push(line);               // ← Add the entire line as a single value 한 줄 전체를 하나의 값으로 추가
   }
-  const val = current.trim();
-  if (val) results.push(val);
+
   return results;
 }
 
