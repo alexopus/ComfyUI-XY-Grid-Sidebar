@@ -2,6 +2,7 @@ import { api } from "../../scripts/api.js";
 
 // ── session state ──────────────────────────────────────────────────────────
 let session = null; // null when idle
+let assembling = false; // guard against concurrent checkAllSettled calls
 
 // ── UI refs (set via initUI) ───────────────────────────────────────────────
 let _ui = {};
@@ -15,6 +16,7 @@ export function isActive() {
 }
 
 export function startSession(config) {
+  assembling = false;
   session = { ...config, done: 0, failed: 0 };
   session.poller = setInterval(pollDroppedPrompts, 2000);
   return session;
@@ -23,6 +25,7 @@ export function startSession(config) {
 export function endSession() {
   clearInterval(session?.poller);
   session = null;
+  assembling = false;
 }
 
 export function updateStatus(msg) {
@@ -43,6 +46,8 @@ export async function checkAllSettled() {
   if (!session) return;
   const total = session.total;
   if (session.done + session.failed < total) return;
+  if (assembling) return;
+  assembling = true;
 
   updateStatus("Assembling grid…");
 
@@ -94,6 +99,7 @@ export async function checkAllSettled() {
   clearInterval(session.poller);
   if (_ui.runBtn) _ui.runBtn.disabled = false;
   session = null;
+  assembling = false;
 }
 
 // ── WebSocket listeners ────────────────────────────────────────────────────
