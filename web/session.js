@@ -46,6 +46,20 @@ export async function checkAllSettled() {
 
   updateStatus("Assembling grid…");
 
+  // For any 'done' cell whose 'executed' WS event was missed, recover image from history
+  await Promise.all(
+    session.cells
+      .filter((c) => c.status === "done" && !c.image && c.promptId)
+      .map(async (cell) => {
+        try {
+          const hr = await api.fetchApi(`/history/${cell.promptId}`);
+          const hdata = await hr.json();
+          const imgs = hdata[cell.promptId]?.outputs?.[session.outputNodeId]?.images;
+          if (imgs?.length) cell.image = imgs[0];
+        } catch {}
+      })
+  );
+
   // Build 2D cells array
   const xCount = new Set(session.cells.map((c) => c.xi)).size;
   const yCount = new Set(session.cells.map((c) => c.yj)).size;
