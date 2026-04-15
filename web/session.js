@@ -104,6 +104,7 @@ async function pollDroppedPrompts() {
       try {
         const hr = await api.fetchApi(`/history/${cell.promptId}`);
         const hdata = await hr.json();
+        if (cell.status !== "pending") continue; // WS event arrived while awaiting history
         const entry = hdata[cell.promptId];
         if (entry?.status?.status_str === "success") {
           // Completed normally but WS event lost or delayed — resolve from history
@@ -117,6 +118,7 @@ async function pollDroppedPrompts() {
           session.failed++;
         }
       } catch {
+        if (cell.status !== "pending") continue;
         cell.status = "failed";
         session.failed++;
       }
