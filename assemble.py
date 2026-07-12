@@ -6,6 +6,7 @@ import folder_paths
 LABEL_H = 96
 LABEL_W = 240
 FONT_SIZE = 32
+MIN_FONT_SIZE = 14
 CELL_PAD = 4
 DESC_PAD = 20
 BG_COLOR = (0, 0, 0)
@@ -72,35 +73,85 @@ def _draw_description(draw, text, total_w, font):
         ty += line_h + 6
 
 
-def _draw_label(draw, text, x, y, w, h, font):
+def _wrap_words(text, avail_w, measure):
+    """Greedy word wrap. May leave lines wider than avail_w if a single word doesn't fit."""
+    words = text.split()
+    if not words:
+        return [text]
+    lines, current = [], words[0]
+    for word in words[1:]:
+        candidate = current + " " + word
+        if measure(candidate)[0] <= avail_w:
+            current = candidate
+        else:
+            lines.append(current)
+            current = word
+    lines.append(current)
+    return lines
+
+
+def _wrap_chars(text, avail_w, measure):
+    """Character-level wrap, used as a fallback when word wrap can't make a line fit
+    (e.g. one long unbroken token like a lora name)."""
+    lines, current = [], ""
+    for ch in text:
+        candidate = current + ch
+        if not current or measure(candidate)[0] <= avail_w:
+            current = candidate
+        else:
+            lines.append(current)
+            current = ch
+    if current:
+        lines.append(current)
+    return lines
+
+
+def _fit_label(draw, text, avail_w, avail_h):
+    """Find the largest font size (and wrapped lines) that fits text within avail_w x avail_h,
+    shrinking from FONT_SIZE down to MIN_FONT_SIZE, wrapping onto as many lines as needed.
+    Falls back to ellipsis-truncating the last visible line at the minimum size if it still
+    doesn't fit."""
+    line_gap = 4
+    size = FONT_SIZE
+    while True:
+        font = _font(size)
+
+        def measure(s):
+            bb = draw.textbbox((0, 0), s, font=font)
+            return bb[2] - bb[0], bb[3] - bb[1]
+
+        lines = _wrap_words(text, avail_w, measure)
+        if any(measure(line)[0] > avail_w for line in lines):
+            lines = _wrap_chars(text, avail_w, measure)
+
+        _, th = measure("Ag")
+        max_lines = max(1, (avail_h + line_gap) // (th + line_gap))
+        total_h = len(lines) * th + (len(lines) - 1) * line_gap
+        fits_w = all(measure(line)[0] <= avail_w for line in lines)
+        fits_h = total_h <= avail_h
+
+        if (fits_w and fits_h) or size <= MIN_FONT_SIZE:
+            def truncate(s):
+                while len(s) > 1 and measure(s)[0] > avail_w:
+                    s = s[:-2] + "…"
+                return s
+
+            if len(lines) > max_lines:
+                lines = lines[:max_lines]
+                lines[-1] = truncate(lines[-1] + "…")
+            lines = [truncate(line) for line in lines]
+            return font, lines, line_gap
+        size -= 2
+
+
+def _draw_label(draw, text, x, y, w, h):
     avail_w = w - 8
+    font, lines, line_gap = _fit_label(draw, text, avail_w, h)
 
     def measure(s):
         bb = draw.textbbox((0, 0), s, font=font)
         return bb[2] - bb[0], bb[3] - bb[1]
 
-    def truncate(s):
-        while len(s) > 1 and measure(s)[0] > avail_w:
-            s = s[:-2] + "…"
-        return s
-
-    if measure(text)[0] <= avail_w:
-        lines = [text]
-    else:
-        words = text.split()
-        if len(words) > 1:
-            # Greedy: find the largest word-boundary prefix that fits on line 1
-            split_i = 1
-            for i in range(1, len(words)):
-                if measure(" ".join(words[:i]))[0] <= avail_w:
-                    split_i = i
-                else:
-                    break
-            lines = [" ".join(words[:split_i]), truncate(" ".join(words[split_i:]))]
-        else:
-            lines = [truncate(text)]
-
-    line_gap = 4
     _, th = measure(lines[0])
     total_h = len(lines) * th + (len(lines) - 1) * line_gap
     ty = y + (h - total_h) // 2
@@ -182,12 +233,12 @@ def assemble_grid(cells, x_labels, y_labels, x_name=None, y_name=None, descripti
     # Column headers (X labels)
     for c, label in enumerate(x_labels[:cols]):
         x = left_off + c * (cell_w + CELL_PAD)
-        _draw_label(draw, str(label), x, desc_off, cell_w, LABEL_H, font)
+        _draw_label(draw, str(label), x, desc_off, cell_w, LABEL_H)
 
     # Row headers (Y labels)
     for r, label in enumerate(y_labels[:rows]):
         y = top_off + r * (cell_h + CELL_PAD)
-        _draw_label(draw, str(label), 0, y, LABEL_W, cell_h, font)
+        _draw_label(draw, str(label), 0, y, LABEL_W, cell_h)
 
     # Paste cells
     for r in range(rows):
