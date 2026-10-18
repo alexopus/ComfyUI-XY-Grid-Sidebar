@@ -29,7 +29,7 @@ web/
 - **WS events**: listen via `api.addEventListener(eventName, handler)`. Relevant: `executed` (→ `data.output.images`), `execution_success`, `execution_error`, `execution_interrupted`.
 - **Dropped-prompt detection**: poll `GET /queue` every 2s. If a pending cell's `promptId` is absent from both `queue_running` and `queue_pending`, check `GET /history/{prompt_id}` before marking failed (race condition: prompt may have completed and left the queue before its WS event arrives).
 - **Image capture**: nodes like SaveImage/PreviewImage have no IMAGE output slot. Images arrive via `executed` WS event: `data.output.images[0]` (`{filename, subfolder, type}`).
-- **S/R mode values**: `getValues()` returns `{ patchValue, label }` objects; `xy_grid.js` unwraps with `patchValue(v)` / `displayValue(v)`.
+- **S/R mode values**: `getValues()` returns `{ patchValue, label, search, replace }` objects; `xy_grid.js` applies them with `applyValue()` (runs `replaceAll` on the prompt's current input value, so X and Y S/R axes on the same widget compose — X first, then Y) and unwraps labels with `displayValue(v)`.
 - **Session timing**: session is created *before* the queuing loop to avoid a race with fast-completing prompts. `total` is set to `combos.length` (not `cells.length`) so `checkAllSettled` can't fire prematurely mid-loop.
 - **State persistence**: `localStorage` key `comfyui_xy_grid_sidebar_state`. Includes node/input/values/label/mode/format/quality/scale/description per axis.
 

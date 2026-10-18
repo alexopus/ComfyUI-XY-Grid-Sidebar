@@ -50,6 +50,16 @@ function deepClone(obj) {
 function patchValue(v) { return v?.patchValue ?? v; }
 function displayValue(v) { return v?.label ?? v; }
 
+// S/R values replace within the prompt's current input value rather than
+// overwriting it, so X and Y S/R axes on the same widget compose.
+function applyValue(inputs, name, v) {
+  if (v?.search != null && typeof inputs[name] === "string") {
+    inputs[name] = inputs[name].replaceAll(v.search, v.replace);
+  } else {
+    inputs[name] = patchValue(v);
+  }
+}
+
 // ── UI refs (populated in render) ─────────────────────────────────────────
 let ui = {};
 
@@ -380,7 +390,7 @@ function render(el) {
           endSession();
           return;
         }
-        prompt[xNodeId].inputs[xInput] = patchValue(combo.xVal);
+        applyValue(prompt[xNodeId].inputs, xInput, combo.xVal);
       }
       if (hasY) {
         if (!prompt[yNodeId]) {
@@ -389,7 +399,7 @@ function render(el) {
           endSession();
           return;
         }
-        prompt[yNodeId].inputs[yInput] = patchValue(combo.yVal);
+        applyValue(prompt[yNodeId].inputs, yInput, combo.yVal);
       }
 
       try {

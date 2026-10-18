@@ -403,7 +403,8 @@ export function buildAxisSection(label, container, onChange) {
         const node = (app.graph?.nodes ?? []).find((n) => String(n.id) === nodeSel.value);
         const widget = (node?.widgets ?? []).find((w) => w.name === inputSel.value);
         const currentVal = String(widget?.value ?? "");
-        return replacements.map((r) => ({ patchValue: currentVal.replaceAll(search, r), label: r }));
+        // search/replace are kept so both axes can compose on the same widget.
+        return replacements.map((r) => ({ patchValue: currentVal.replaceAll(search, r), label: r, search, replace: r }));
       }
       return tokens;
     },

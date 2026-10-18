@@ -1,7 +1,7 @@
 [project]
 name = "comfyui-xy-grid-sidebar"
 description = "A ComfyUI sidebar extension for XY grid parameter exploration"
-version = "0.0.2"
+version = "0.0.3"
 license = { file = "LICENSE" }
 dependencies = ["Pillow"]
 
